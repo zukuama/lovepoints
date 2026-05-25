@@ -449,62 +449,65 @@ async function(action, points){
 
 function render(){
 
-  const month =
-    new Date().getMonth();
+  let hombreTotal = 0;
 
-  const year =
-    new Date().getFullYear();
+  let mujerTotal = 0;
 
-  let totals = {
-
-    Hombre:0,
-
-    Mujer:0
-
-  };
-
-  // =====================================
-  // 🔥 CALCULAR PUNTOS
-  // =====================================
-
+  // 🔥 recorrer logs
   logs.forEach(l => {
 
-    // 🔥 validar gender
-    if(!l.gender){
+    // 🔥 validar puntos
+    const pts =
+      Number(l.points) || 0;
 
-      return;
+    // 🔥 normalizar gender
+    const gender =
+      String(l.gender || "")
+      .toLowerCase()
+      .trim();
 
-    }
-
+    // 🔥 sumar
     if(
 
-      l.month === month &&
+      gender.includes("hombre") ||
 
-      l.year === year
+      gender.includes("male") ||
+
+      gender.includes("mascul")
 
     ){
 
-      if(!totals[l.gender]){
+      hombreTotal += pts;
 
-        totals[l.gender] = 0;
+    }
 
-      }
+    else if(
 
-      totals[l.gender] += l.points;
+      gender.includes("mujer") ||
+
+      gender.includes("female") ||
+
+      gender.includes("femen")
+
+    ){
+
+      mujerTotal += pts;
 
     }
 
   });
 
   console.log(
-    "🔥 Totales:",
-    totals
+    "🔥 Hombre:",
+    hombreTotal
   );
 
-  // =====================================
-  // 🔥 SCORE UI
-  // =====================================
+  console.log(
+    "🔥 Mujer:",
+    mujerTotal
+  );
 
+  // 🔥 UI
   const scoreHombre =
     document.getElementById(
       "score-Hombre"
@@ -518,16 +521,14 @@ function render(){
   if(scoreHombre){
 
     scoreHombre.innerText =
-
-      totals.Hombre || 0;
+      hombreTotal;
 
   }
 
   if(scoreMujer){
 
     scoreMujer.innerText =
-
-      totals.Mujer || 0;
+      mujerTotal;
 
   }
 
@@ -553,7 +554,7 @@ function render(){
     (a,b)=>
     b.timestamp - a.timestamp
   )
-  .slice(0,10)
+  .slice(0,20)
   .forEach(l => {
 
     const div =
