@@ -1,38 +1,71 @@
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+// =====================================
+// 👤 USERS
+// =====================================
+
+import { db }
+
+from "./firebase.js";
 
 import {
-  getFirestore,
+
   doc,
-  getDoc
+  getDoc,
+  updateDoc
+
 }
+
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-const firebaseConfig = {
 
-  apiKey: "AIzaSyBVnJdDkr4tw4dD9lr8APcsAiGF5y3VUEg",
-
-  authDomain: "lovepoints-d0cc6.firebaseapp.com",
-
-  projectId: "lovepoints-d0cc6",
-
-  storageBucket: "lovepoints-d0cc6.firebasestorage.app",
-
-  messagingSenderId: "844599014745",
-
-  appId: "1:844599014745:web:ed1c32be41ccd45b140848"
-
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
+// =====================================
+// 👀 GET USER
+// =====================================
 
 export async function getUserData(uid){
 
-  const snap =
-    await getDoc(doc(db, "users", uid));
+  const ref =
+    doc(
+      db,
+      "users",
+      uid
+    );
 
-  return snap.data();
+  const snap =
+    await getDoc(ref);
+
+  if(snap.exists()){
+
+    return snap.data();
+
+  }
+
+  return null;
+
+}
+
+
+// =====================================
+// ❤️ UPDATE USER
+// =====================================
+
+export async function updateUser(
+
+  uid,
+
+  data
+
+){
+
+  const ref =
+    doc(
+      db,
+      "users",
+      uid
+    );
+
+  await updateDoc(
+    ref,
+    data
+  );
 
 }

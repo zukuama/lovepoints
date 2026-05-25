@@ -1,34 +1,29 @@
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+// =====================================
+// ❤️ COUPLES
+// =====================================
+
+import { db }
+
+from "./firebase.js";
 
 import {
-  getFirestore,
+
   doc,
   setDoc,
   getDoc,
   updateDoc
+
 }
+
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-const firebaseConfig = {
+import {
 
-  apiKey: "AIzaSyBVnJdDkr4tw4dD9lr8APcsAiGF5y3VUEg",
+  updateUser
 
-  authDomain: "lovepoints-d0cc6.firebaseapp.com",
+}
 
-  projectId: "lovepoints-d0cc6",
-
-  storageBucket: "lovepoints-d0cc6.firebasestorage.app",
-
-  messagingSenderId: "844599014745",
-
-  appId: "1:844599014745:web:ed1c32be41ccd45b140848"
-
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
+from "./users.js";
 
 
 // =====================================
@@ -38,9 +33,12 @@ const db = getFirestore(app);
 function generateCode(){
 
   return Math.random()
-    .toString(36)
-    .substring(2,8)
-    .toUpperCase();
+
+  .toString(36)
+
+  .substring(2,8)
+
+  .toUpperCase();
 
 }
 
@@ -49,39 +47,37 @@ function generateCode(){
 // ❤️ CREAR PAREJA
 // =====================================
 
-export async function createCouple(userId){
+export async function createCouple(uid){
 
-  const code = generateCode();
+  const code =
+    generateCode();
 
-  // 🔥 crear pareja
   await setDoc(
 
-    doc(db, "couples", code),
+    doc(
+      db,
+      "couples",
+      code
+    ),
 
     {
 
       code,
 
-      members:[userId],
+      createdBy:uid,
 
-      createdAt:Date.now()
-
-    }
-
-  );
-
-  // 🔥 actualizar usuario
-  await updateDoc(
-
-    doc(db, "users", userId),
-
-    {
-
-      coupleId:code
+      createdAt:
+        Date.now()
 
     }
 
   );
+
+  await updateUser(uid,{
+
+    coupleId:code
+
+  });
 
   return code;
 
@@ -94,14 +90,18 @@ export async function createCouple(userId){
 
 export async function joinCouple(
 
-  userId,
+  uid,
 
   code
 
 ){
 
   const ref =
-    doc(db, "couples", code);
+    doc(
+      db,
+      "couples",
+      code
+    );
 
   const snap =
     await getDoc(ref);
@@ -109,42 +109,15 @@ export async function joinCouple(
   if(!snap.exists()){
 
     throw new Error(
-      "Código inválido"
+      "Pareja no encontrada"
     );
 
   }
 
-  const data = snap.data();
+  await updateUser(uid,{
 
-  // 🔥 evitar duplicados
-  let members = data.members || [];
-
-  if(!members.includes(userId)){
-
-    members.push(userId);
-
-  }
-
-  // 🔥 actualizar pareja
-  await updateDoc(ref, {
-
-    members
+    coupleId:code
 
   });
-
-  // 🔥 actualizar usuario
-  await updateDoc(
-
-    doc(db, "users", userId),
-
-    {
-
-      coupleId:code
-
-    }
-
-  );
-
-  return true;
 
 }

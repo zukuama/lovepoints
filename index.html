@@ -49,7 +49,9 @@ body{
 
 .btn-action{
 
-  border-radius:18px;
+  position:relative;
+
+  border-radius:20px;
 
   padding:18px;
 
@@ -61,11 +63,52 @@ body{
 
   font-weight:600;
 
+  overflow:hidden;
+
+  min-height:130px;
+
+  display:flex;
+
+  align-items:end;
+
+  justify-content:start;
+
+  text-align:left;
+
+  background-size:cover;
+
+  background-position:center;
+
 }
 
 .btn-action:hover{
 
   transform:translateY(-2px);
+
+}
+
+.btn-overlay{
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+  linear-gradient(
+    to top,
+    rgba(0,0,0,.7),
+    rgba(0,0,0,.15)
+  );
+
+}
+
+.btn-content{
+
+  position:relative;
+
+  z-index:2;
+
+  color:white;
 
 }
 
@@ -140,6 +183,62 @@ body{
 
 }
 
+.custom-input{
+
+  border-radius:15px;
+
+  padding:12px;
+
+}
+
+.section-title{
+
+  font-weight:700;
+
+  margin-bottom:15px;
+
+}
+
+.activity-preview{
+
+  width:100%;
+
+  height:180px;
+
+  object-fit:cover;
+
+  border-radius:15px;
+
+  margin-top:10px;
+
+  display:none;
+
+}
+
+.badge-use{
+
+  position:absolute;
+
+  top:10px;
+
+  right:10px;
+
+  z-index:3;
+
+  background:#ffffffdd;
+
+  color:#222;
+
+  padding:5px 10px;
+
+  border-radius:30px;
+
+  font-size:.8rem;
+
+  font-weight:600;
+
+}
+
 </style>
 
 </head>
@@ -152,6 +251,8 @@ body{
 
 <div class="col-12 col-md-6">
 
+
+<!-- LOGO -->
 <h1 class="text-center fw-bold mb-4">
 ❤️ LovePoints
 </h1>
@@ -220,7 +321,7 @@ id="couple-section"
 class="main-card p-3 mb-3"
 >
 
-<h5 class="fw-bold mb-3">
+<h5 class="section-title">
 ❤️ Pareja
 </h5>
 
@@ -242,7 +343,7 @@ Código:
 
 <input
 id="join-code"
-class="form-control mb-2"
+class="form-control custom-input mb-2"
 placeholder="Ingresar código"
 />
 
@@ -277,50 +378,74 @@ Código:
 </div>
 
 
-<!-- ACCIONES -->
-<div class="main-card p-3 mb-3">
+<!-- CREAR ACTIVIDAD -->
+<div
+id="activity-creator"
+class="main-card p-3 mb-3"
+>
 
-<h5 class="fw-bold mb-3">
-Acciones
+<h5 class="section-title">
+➕ Crear actividad
 </h5>
 
-<div class="row g-2">
+<input
+id="activity-name"
+class="form-control custom-input mb-2"
+placeholder="Nombre actividad"
+/>
 
-<div class="col-6">
+<input
+id="activity-points"
+type="number"
+class="form-control custom-input mb-2"
+placeholder="Puntos"
+/>
+
+<input
+id="activity-image"
+type="file"
+accept="image/*"
+class="form-control custom-input mb-2"
+/>
+
+<img
+id="activity-preview"
+class="activity-preview"
+/>
+
 <button
-class="btn btn-action w-100"
-onclick="addPoint('Beso',15)"
+class="btn btn-primary w-100 mt-3"
+onclick="createNewActivity()"
 >
-💋 Beso +15
+Guardar actividad
 </button>
+
 </div>
 
-<div class="col-6">
-<button
-class="btn btn-action w-100"
-onclick="addPoint('Abrazo',20)"
+
+<!-- ACTIVIDADES -->
+<div class="main-card p-3 mb-3">
+
+<div
+class="d-flex justify-content-between align-items-center mb-3"
 >
-🫂 Abrazo +20
-</button>
+
+<h5 class="section-title mb-0">
+🔥 Actividades
+</h5>
+
+<small class="text-muted">
+Más usadas primero
+</small>
+
 </div>
 
-<div class="col-6">
-<button
-class="btn btn-action w-100"
-onclick="addPoint('Masaje',45)"
+<div
+id="activities-container"
+class="row g-2"
 >
-💆 Masaje +45
-</button>
-</div>
 
-<div class="col-6">
-<button
-class="btn btn-action w-100"
-onclick="addPoint('Cocinar',50)"
->
-🍳 Cocinar +50
-</button>
-</div>
+<!-- dinámico -->
 
 </div>
 
@@ -372,12 +497,19 @@ class="fs-2 fw-bold"
 
 
 <!-- HISTORIAL -->
+<div>
+
+<h5 class="fw-bold mb-3">
+📜 Historial
+</h5>
+
 <div id="history-list"></div>
 
 </div>
 
-</div>
 
+</div>
+</div>
 </div>
 
 <script

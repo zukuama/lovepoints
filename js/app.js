@@ -29,12 +29,23 @@ import {
 }
 from "./ui.js";
 
+import {
+
+  createActivity,
+  listenActivities,
+  increaseActivityUse
+
+}
+from "./activities.js";
+
 
 // =====================================
 // 🔥 VARIABLES
 // =====================================
 
 let logs = [];
+
+let activities = [];
 
 let currentUserData = null;
 
@@ -74,10 +85,6 @@ window.logout = async function(){
 
     await logout();
 
-    alert(
-      "Sesión cerrada"
-    );
-
     location.reload();
 
   }catch(e){
@@ -111,29 +118,16 @@ async function(){
         currentUserData.uid
       );
 
-    // 🔥 guardar local
     currentUserData.coupleId =
       code;
 
-    // 🔥 UI
-    const coupleCodeEl =
-      document.getElementById(
-        "couple-code"
-      );
-
-    if(coupleCodeEl){
-
-      coupleCodeEl.innerText = code;
-
-    }
-
-    // 🔥 ocultar panel pareja
     renderCoupleSection(
       currentUserData
     );
 
-    // 🔥 realtime
     startRealtimeLogs();
+
+    startRealtimeActivities();
 
     alert(
       "❤️ Pareja creada"
@@ -142,10 +136,6 @@ async function(){
   }catch(e){
 
     console.error(e);
-
-    alert(
-      "Error creando pareja"
-    );
 
   }
 
@@ -167,30 +157,19 @@ async function(){
 
   }
 
-  const input =
-    document.getElementById(
-      "join-code"
-    );
-
-  if(!input){
-
-    alert(
-      "No existe el input join-code"
-    );
-
-    return;
-
-  }
-
   const code =
-    input.value
+    document
+    .getElementById(
+      "join-code"
+    )
+    .value
     .trim()
     .toUpperCase();
 
   if(!code){
 
     alert(
-      "Ingresá un código"
+      "Ingresá código"
     );
 
     return;
@@ -207,17 +186,16 @@ async function(){
 
     );
 
-    // 🔥 actualizar local
     currentUserData.coupleId =
       code;
 
-    // 🔥 ocultar panel pareja
     renderCoupleSection(
       currentUserData
     );
 
-    // 🔥 realtime
     startRealtimeLogs();
+
+    startRealtimeActivities();
 
     alert(
       "❤️ Vinculados"
@@ -227,9 +205,7 @@ async function(){
 
     console.error(e);
 
-    alert(
-      e.message
-    );
+    alert(e.message);
 
   }
 
@@ -261,39 +237,17 @@ onUserChange(async user => {
 
       isAuthReady = true;
 
-      console.log(
-        "✅ Usuario:",
-        currentUserData
-      );
-
-      // 🔥 UI usuario
       renderUser(
         currentUserData
       );
 
-      // 🔥 UI pareja
       renderCoupleSection(
         currentUserData
       );
 
-      // 🔥 nombre fallback
-      const userName =
-        document.getElementById(
-          "user-name"
-        );
-
-      if(userName){
-
-        userName.innerText =
-
-          currentUserData.name ||
-
-          user.displayName;
-
-      }
-
-      // 🔥 realtime
       startRealtimeLogs();
+
+      startRealtimeActivities();
 
     }catch(e){
 
@@ -309,7 +263,11 @@ onUserChange(async user => {
 
     logs = [];
 
+    activities = [];
+
     render();
+
+    renderActivities();
 
     renderUser(null);
 
@@ -334,10 +292,6 @@ function startRealtimeLogs(){
 
   ){
 
-    console.log(
-      "⚠️ Usuario sin pareja"
-    );
-
     logs = [];
 
     render();
@@ -346,14 +300,6 @@ function startRealtimeLogs(){
 
   }
 
-  console.log(
-
-    "❤️ Escuchando pareja:",
-
-    currentUserData.coupleId
-
-  );
-
   listenLogs(
 
     currentUserData.coupleId,
@@ -361,13 +307,6 @@ function startRealtimeLogs(){
     realtimeLogs => {
 
       logs = realtimeLogs;
-
-      console.log(
-        "🔥 Logs realtime:",
-        logs
-      );
-
-      console.table(logs);
 
       render();
 
@@ -379,11 +318,260 @@ function startRealtimeLogs(){
 
 
 // =====================================
+// 🔥 REALTIME ACTIVITIES
+// =====================================
+
+function startRealtimeActivities(){
+
+  if(
+
+    !currentUserData ||
+
+    !currentUserData.coupleId
+
+  ){
+
+    activities = [];
+
+    renderActivities();
+
+    return;
+
+  }
+
+  listenActivities(
+
+    currentUserData.coupleId,
+
+    realtimeActivities => {
+
+      activities =
+        realtimeActivities;
+
+      renderActivities();
+
+    }
+
+  );
+
+}
+
+
+// =====================================
+// ➕ CREAR ACTIVIDAD
+// =====================================
+
+window.createNewActivity =
+async function(){
+
+  if(!currentUserData){
+
+    alert(
+      "Iniciá sesión"
+    );
+
+    return;
+
+  }
+
+  if(!currentUserData.coupleId){
+
+    alert(
+      "Primero conectá pareja"
+    );
+
+    return;
+
+  }
+
+  const name =
+    document
+    .getElementById(
+      "activity-name"
+    )
+    .value
+    .trim();
+
+  const points =
+    Number(
+
+      document
+      .getElementById(
+        "activity-points"
+      )
+      .value
+
+    );
+
+  const file =
+    document
+    .getElementById(
+      "activity-image"
+    )
+    .files[0];
+
+  if(!name || !points){
+
+    alert(
+      "Completar datos"
+    );
+
+    return;
+
+  }
+
+  let image = "";
+
+  // =====================================
+  // 🔥 CONVERTIR IMAGEN BASE64
+  // =====================================
+
+  if(file){
+
+    image =
+      await toBase64(file);
+
+  }
+
+  const activity = {
+
+    coupleId:
+      currentUserData.coupleId,
+
+    name,
+
+    points,
+
+    image,
+
+    uses:0,
+
+    createdBy:
+      currentUserData.uid,
+
+    createdAt:
+      Date.now()
+
+  };
+
+  try{
+
+    await createActivity(
+      activity
+    );
+
+    // limpiar
+    document
+    .getElementById(
+      "activity-name"
+    )
+    .value = "";
+
+    document
+    .getElementById(
+      "activity-points"
+    )
+    .value = "";
+
+    document
+    .getElementById(
+      "activity-image"
+    )
+    .value = "";
+
+    document
+    .getElementById(
+      "activity-preview"
+    )
+    .style.display = "none";
+
+  }catch(e){
+
+    console.error(e);
+
+  }
+
+};
+
+
+// =====================================
+// 🔥 PREVIEW IMAGEN
+// =====================================
+
+document
+.getElementById(
+  "activity-image"
+)
+?.addEventListener(
+
+  "change",
+
+  async e => {
+
+    const file =
+      e.target.files[0];
+
+    if(!file){
+
+      return;
+
+    }
+
+    const base64 =
+      await toBase64(file);
+
+    const preview =
+      document.getElementById(
+        "activity-preview"
+      );
+
+    preview.src =
+      base64;
+
+    preview.style.display =
+      "block";
+
+  }
+
+);
+
+
+// =====================================
+// 🔥 TO BASE64
+// =====================================
+
+function toBase64(file){
+
+  return new Promise((resolve,reject)=>{
+
+    const reader =
+      new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload =
+      ()=>resolve(reader.result);
+
+    reader.onerror =
+      error=>reject(error);
+
+  });
+
+}
+
+
+// =====================================
 // ➕ AGREGAR PUNTOS
 // =====================================
 
 window.addPoint =
-async function(action, points){
+async function(
+
+  activityId,
+  action,
+  points
+
+){
 
   if(!isAuthReady){
 
@@ -395,20 +583,10 @@ async function(action, points){
 
   }
 
-  if(!currentUserData){
-
-    alert(
-      "Usuario inválido"
-    );
-
-    return;
-
-  }
-
   if(!currentUserData.coupleId){
 
     alert(
-      "Primero creá o uníte a una pareja ❤️"
+      "Conectá pareja"
     );
 
     return;
@@ -423,12 +601,10 @@ async function(action, points){
       currentUserData.uid,
 
     userName:
-      currentUserData.name
-      || "Usuario",
+      currentUserData.name,
 
     gender:
-      currentUserData.gender
-      || "Hombre",
+      currentUserData.gender,
 
     coupleId:
       currentUserData.coupleId,
@@ -436,6 +612,8 @@ async function(action, points){
     action,
 
     points,
+
+    activityId,
 
     timestamp:
       now.getTime(),
@@ -448,26 +626,18 @@ async function(action, points){
 
   };
 
-  console.log(
-    "🔥 Guardando log:",
-    log
-  );
-
   try{
 
     await saveLog(log);
 
-    console.log(
-      "✅ Punto agregado"
+    // 🔥 sumar uso
+    await increaseActivityUse(
+      activityId
     );
 
   }catch(e){
 
     console.error(e);
-
-    alert(
-      "Error guardando puntos"
-    );
 
   }
 
@@ -475,7 +645,81 @@ async function(action, points){
 
 
 // =====================================
-// 🎨 RENDER
+// 🎨 ACTIVIDADES
+// =====================================
+
+function renderActivities(){
+
+  const container =
+    document.getElementById(
+      "activities-container"
+    );
+
+  if(!container){
+
+    return;
+
+  }
+
+  container.innerHTML = "";
+
+  activities.forEach(a=>{
+
+    const col =
+      document.createElement("div");
+
+    col.className =
+      "col-6";
+
+    col.innerHTML = `
+
+      <button
+      class="btn btn-action w-100"
+
+      style="
+      background-image:url('${a.image || ""}');
+      "
+
+      onclick="
+      addPoint(
+        '${a.id}',
+        '${a.name}',
+        ${a.points}
+      )
+      "
+      >
+
+      <div class="btn-overlay"></div>
+
+      <div class="badge-use">
+      🔥 ${a.uses || 0}
+      </div>
+
+      <div class="btn-content">
+
+      <div class="fs-5">
+      ${a.name}
+      </div>
+
+      <small>
+      +${a.points} pts
+      </small>
+
+      </div>
+
+      </button>
+
+    `;
+
+    container.appendChild(col);
+
+  });
+
+}
+
+
+// =====================================
+// 🎨 SCORE + HISTORIAL
 // =====================================
 
 function render(){
@@ -483,10 +727,6 @@ function render(){
   let hombreTotal = 0;
 
   let mujerTotal = 0;
-
-  // =====================================
-  // 🔥 CALCULAR PUNTOS
-  // =====================================
 
   logs.forEach(l => {
 
@@ -498,7 +738,6 @@ function render(){
       .toLowerCase()
       .trim();
 
-    // 🔥 hombre
     if(
 
       gender.includes("hombre") ||
@@ -513,7 +752,6 @@ function render(){
 
     }
 
-    // 🔥 mujer
     else if(
 
       gender.includes("mujer") ||
@@ -530,46 +768,21 @@ function render(){
 
   });
 
-  console.log(
-    "🔥 Hombre:",
-    hombreTotal
-  );
-
-  console.log(
-    "🔥 Mujer:",
-    mujerTotal
-  );
-
-  // 🔥 nombres reales
   renderNames(logs);
 
   // =====================================
-  // 🔥 SCORE UI
+  // 🔥 SCORE
   // =====================================
 
-  const scoreHombre =
-    document.getElementById(
-      "score-Hombre"
-    );
+  document.getElementById(
+    "score-Hombre"
+  ).innerText =
+    hombreTotal;
 
-  const scoreMujer =
-    document.getElementById(
-      "score-Mujer"
-    );
-
-  if(scoreHombre){
-
-    scoreHombre.innerText =
-      hombreTotal;
-
-  }
-
-  if(scoreMujer){
-
-    scoreMujer.innerText =
-      mujerTotal;
-
-  }
+  document.getElementById(
+    "score-Mujer"
+  ).innerText =
+    mujerTotal;
 
   // =====================================
   // 🔥 HISTORIAL

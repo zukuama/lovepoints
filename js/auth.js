@@ -1,72 +1,47 @@
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+// =====================================
+// 🔐 AUTH
+// =====================================
 
 import {
+
   getAuth,
-  signInWithPopup,
   GoogleAuthProvider,
+  signInWithPopup,
   onAuthStateChanged,
   signOut
+
 }
+
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
+import { db }
+
+from "./firebase.js";
+
 import {
-  getFirestore,
+
   doc,
-  setDoc,
-  getDoc
+  getDoc,
+  setDoc
+
 }
+
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 
 // =====================================
-// 🔥 CONFIG FIREBASE
+// 🔥 AUTH
 // =====================================
 
-const firebaseConfig = {
+const auth =
+  getAuth();
 
-  apiKey: "AIzaSyBVnJdDkr4tw4dD9lr8APcsAiGF5y3VUEg",
-
-  authDomain: "lovepoints-d0cc6.firebaseapp.com",
-
-  projectId: "lovepoints-d0cc6",
-
-  storageBucket: "lovepoints-d0cc6.firebasestorage.app",
-
-  messagingSenderId: "844599014745",
-
-  appId: "1:844599014745:web:ed1c32be41ccd45b140848"
-
-};
+const provider =
+  new GoogleAuthProvider();
 
 
 // =====================================
-// 🔥 INIT
-// =====================================
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const db = getFirestore(app);
-
-
-// =====================================
-// 🔥 GOOGLE PROVIDER
-// =====================================
-
-const provider = new GoogleAuthProvider();
-
-// 🔥 FORZAR SELECCIÓN DE CUENTA
-provider.setCustomParameters({
-
-  prompt:"select_account"
-
-});
-
-
-// =====================================
-// 🔐 LOGIN GOOGLE
+// 🔐 LOGIN
 // =====================================
 
 export async function loginGoogle(){
@@ -77,34 +52,49 @@ export async function loginGoogle(){
       provider
     );
 
-  const user = result.user;
+  const user =
+    result.user;
 
-  const userRef =
-    doc(db, "users", user.uid);
-
-  const snap =
-    await getDoc(userRef);
-
-  // 🔥 SI NO EXISTE → CREAR
-  if(!snap.exists()){
-
-    const gender = prompt(
-      "Ingresá tu género: Hombre o Mujer"
+  const ref =
+    doc(
+      db,
+      "users",
+      user.uid
     );
 
-    await setDoc(userRef, {
+  const snap =
+    await getDoc(ref);
+
+  // =====================================
+  // ❤️ CREAR USER
+  // =====================================
+
+  if(!snap.exists()){
+
+    const gender =
+      prompt(
+        "¿Sos Hombre o Mujer?"
+      ) || "Hombre";
+
+    await setDoc(ref,{
 
       uid:user.uid,
 
-      name:user.displayName,
+      name:
+        user.displayName,
 
-      email:user.email,
+      email:
+        user.email,
 
-      photo:user.photoURL,
+      photo:
+        user.photoURL,
 
       gender,
 
-      coupleId:null
+      coupleId:null,
+
+      createdAt:
+        Date.now()
 
     });
 
@@ -116,7 +106,7 @@ export async function loginGoogle(){
 
 
 // =====================================
-// 👀 DETECTAR SESIÓN
+// 👀 CAMBIOS LOGIN
 // =====================================
 
 export function onUserChange(callback){
@@ -125,7 +115,11 @@ export function onUserChange(callback){
 
     auth,
 
-    callback
+    user=>{
+
+      callback(user);
+
+    }
 
   );
 
