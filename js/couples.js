@@ -30,6 +30,11 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
+
+// =====================================
+// 🔥 GENERAR CÓDIGO
+// =====================================
+
 function generateCode(){
 
   return Math.random()
@@ -39,26 +44,61 @@ function generateCode(){
 
 }
 
-// CREAR
+
+// =====================================
+// ❤️ CREAR PAREJA
+// =====================================
+
 export async function createCouple(userId){
 
   const code = generateCode();
 
+  // 🔥 crear pareja
   await setDoc(
+
     doc(db, "couples", code),
+
     {
+
       code,
+
       members:[userId],
+
       createdAt:Date.now()
+
     }
+
+  );
+
+  // 🔥 actualizar usuario
+  await updateDoc(
+
+    doc(db, "users", userId),
+
+    {
+
+      coupleId:code
+
+    }
+
   );
 
   return code;
 
 }
 
-// UNIRSE
-export async function joinCouple(userId, code){
+
+// =====================================
+// 🔗 UNIRSE
+// =====================================
+
+export async function joinCouple(
+
+  userId,
+
+  code
+
+){
 
   const ref =
     doc(db, "couples", code);
@@ -68,19 +108,43 @@ export async function joinCouple(userId, code){
 
   if(!snap.exists()){
 
-    throw new Error("Código inválido");
+    throw new Error(
+      "Código inválido"
+    );
 
   }
 
   const data = snap.data();
 
-  const members = [
-    ...data.members,
-    userId
-  ];
+  // 🔥 evitar duplicados
+  let members = data.members || [];
 
-  await updateDoc(ref,{
+  if(!members.includes(userId)){
+
+    members.push(userId);
+
+  }
+
+  // 🔥 actualizar pareja
+  await updateDoc(ref, {
+
     members
+
   });
+
+  // 🔥 actualizar usuario
+  await updateDoc(
+
+    doc(db, "users", userId),
+
+    {
+
+      coupleId:code
+
+    }
+
+  );
+
+  return true;
 
 }

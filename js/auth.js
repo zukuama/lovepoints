@@ -5,7 +5,8 @@ import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signOut
 }
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
@@ -16,6 +17,11 @@ import {
   getDoc
 }
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+
+// =====================================
+// 🔥 CONFIG FIREBASE
+// =====================================
 
 const firebaseConfig = {
 
@@ -33,19 +39,43 @@ const firebaseConfig = {
 
 };
 
+
+// =====================================
+// 🔥 INIT
+// =====================================
+
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
 const db = getFirestore(app);
 
+
+// =====================================
+// 🔥 GOOGLE PROVIDER
+// =====================================
+
 const provider = new GoogleAuthProvider();
 
-// LOGIN
+// 🔥 FORZAR SELECCIÓN DE CUENTA
+provider.setCustomParameters({
+
+  prompt:"select_account"
+
+});
+
+
+// =====================================
+// 🔐 LOGIN GOOGLE
+// =====================================
+
 export async function loginGoogle(){
 
   const result =
-    await signInWithPopup(auth, provider);
+    await signInWithPopup(
+      auth,
+      provider
+    );
 
   const user = result.user;
 
@@ -55,7 +85,7 @@ export async function loginGoogle(){
   const snap =
     await getDoc(userRef);
 
-  // SI NO EXISTE
+  // 🔥 SI NO EXISTE → CREAR
   if(!snap.exists()){
 
     const gender = prompt(
@@ -64,26 +94,50 @@ export async function loginGoogle(){
 
     await setDoc(userRef, {
 
-      uid: user.uid,
+      uid:user.uid,
 
-      name: user.displayName,
+      name:user.displayName,
 
-      email: user.email,
+      email:user.email,
 
-      photo: user.photoURL,
+      photo:user.photoURL,
 
-      gender
+      gender,
+
+      coupleId:null
 
     });
 
   }
 
   return user;
+
 }
 
-// DETECTAR SESIÓN
+
+// =====================================
+// 👀 DETECTAR SESIÓN
+// =====================================
+
 export function onUserChange(callback){
 
-  onAuthStateChanged(auth, callback);
+  onAuthStateChanged(
+
+    auth,
+
+    callback
+
+  );
+
+}
+
+
+// =====================================
+// 🚪 LOGOUT
+// =====================================
+
+export async function logout(){
+
+  await signOut(auth);
 
 }
