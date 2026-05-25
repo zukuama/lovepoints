@@ -22,6 +22,13 @@ import {
 }
 from "./couples.js";
 
+import {
+  renderUser,
+  renderCoupleSection,
+  renderNames
+}
+from "./ui.js";
+
 
 // =====================================
 // 🔥 VARIABLES
@@ -120,6 +127,11 @@ async function(){
 
     }
 
+    // 🔥 ocultar panel pareja
+    renderCoupleSection(
+      currentUserData
+    );
+
     // 🔥 realtime
     startRealtimeLogs();
 
@@ -199,6 +211,11 @@ async function(){
     currentUserData.coupleId =
       code;
 
+    // 🔥 ocultar panel pareja
+    renderCoupleSection(
+      currentUserData
+    );
+
     // 🔥 realtime
     startRealtimeLogs();
 
@@ -249,7 +266,17 @@ onUserChange(async user => {
         currentUserData
       );
 
-      // 🔥 nombre UI
+      // 🔥 UI usuario
+      renderUser(
+        currentUserData
+      );
+
+      // 🔥 UI pareja
+      renderCoupleSection(
+        currentUserData
+      );
+
+      // 🔥 nombre fallback
       const userName =
         document.getElementById(
           "user-name"
@@ -283,6 +310,10 @@ onUserChange(async user => {
     logs = [];
 
     render();
+
+    renderUser(null);
+
+    renderCoupleSection(null);
 
   }
 
@@ -453,20 +484,21 @@ function render(){
 
   let mujerTotal = 0;
 
-  // 🔥 recorrer logs
+  // =====================================
+  // 🔥 CALCULAR PUNTOS
+  // =====================================
+
   logs.forEach(l => {
 
-    // 🔥 validar puntos
     const pts =
       Number(l.points) || 0;
 
-    // 🔥 normalizar gender
     const gender =
       String(l.gender || "")
       .toLowerCase()
       .trim();
 
-    // 🔥 sumar
+    // 🔥 hombre
     if(
 
       gender.includes("hombre") ||
@@ -481,6 +513,7 @@ function render(){
 
     }
 
+    // 🔥 mujer
     else if(
 
       gender.includes("mujer") ||
@@ -507,7 +540,13 @@ function render(){
     mujerTotal
   );
 
-  // 🔥 UI
+  // 🔥 nombres reales
+  renderNames(logs);
+
+  // =====================================
+  // 🔥 SCORE UI
+  // =====================================
+
   const scoreHombre =
     document.getElementById(
       "score-Hombre"

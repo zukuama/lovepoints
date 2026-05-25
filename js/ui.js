@@ -1,62 +1,177 @@
-// js/ui.js
+// =====================================
+// 👤 PERFIL USUARIO
+// =====================================
 
-import { getWeeklyWinner, getTopActions, getTotalPoints } from "./stats.js";
+export function renderUser(user){
 
-export function renderUI(logs, currentUser) {
-  const month = new Date().getMonth();
-  const year = new Date().getFullYear();
+  const loginBtn =
+    document.getElementById(
+      "login-btn"
+    );
 
-  let totals = { Hombre: 0, Mujer: 0 };
+  const logoutBtn =
+    document.getElementById(
+      "logout-btn"
+    );
 
-  logs.forEach(l => {
-    if (l.month === month && l.year === year) {
-      totals[l.user] += l.points;
-    }
-  });
+  const profileBox =
+    document.getElementById(
+      "profile-box"
+    );
 
-  document.getElementById("score-Hombre").innerText = totals.Hombre;
-  document.getElementById("score-Mujer").innerText = totals.Mujer;
+  const profileImg =
+    document.getElementById(
+      "profile-img"
+    );
 
-  // 🏆 ganador
-  document.getElementById("winner").innerText = getWeeklyWinner(logs);
+  const profileName =
+    document.getElementById(
+      "profile-name"
+    );
 
-  // historial
-  const list = document.getElementById("history-list");
-  list.innerHTML = "";
+  if(user){
 
-  logs.slice(-5).reverse().forEach(l => {
-    const div = document.createElement("div");
-    div.className = "history-item";
-    div.innerHTML = `${l.user} hizo ${l.action} (+${l.points})`;
-    list.appendChild(div);
-  });
+    // ocultar login
+    loginBtn.style.display =
+      "none";
 
-  // 🔥 ESTADÍSTICAS
-  renderStats(logs);
-}
+    // mostrar perfil
+    profileBox.style.display =
+      "flex";
 
-function renderStats(logs) {
-  const container = document.getElementById("stats");
+    logoutBtn.style.display =
+      "block";
 
-  const totals = getTotalPoints(logs);
-  const actions = getTopActions(logs);
+    profileImg.src =
+      user.photo ||
+      user.photoURL;
 
-  let html = `
-    <div class="card p-3 mt-3">
-      <h6>📊 Estadísticas</h6>
-      <p><strong>Total Él:</strong> ${totals.Hombre}</p>
-      <p><strong>Total Ella:</strong> ${totals.Mujer}</p>
-      <hr>
-      <strong>Acciones:</strong>
-  `;
+    profileName.innerText =
+      user.name ||
+      user.displayName;
 
-  for (let action in actions) {
-    html += `
-      <p>${action} → Él: ${actions[action].Hombre} | Ella: ${actions[action].Mujer}</p>
-    `;
+  }else{
+
+    loginBtn.style.display =
+      "block";
+
+    profileBox.style.display =
+      "none";
+
+    logoutBtn.style.display =
+      "none";
+
   }
 
-  html += `</div>`;
+}
 
-  container.innerHTML = html;
+
+// =====================================
+// ❤️ PANEL PAREJA
+// =====================================
+
+export function renderCoupleSection(user){
+
+  const section =
+    document.getElementById(
+      "couple-section"
+    );
+
+  const connected =
+    document.getElementById(
+      "connected-box"
+    );
+
+  const coupleCode =
+    document.getElementById(
+      "connected-code"
+    );
+
+  if(
+    user &&
+    user.coupleId
+  ){
+
+    section.style.display =
+      "none";
+
+    connected.style.display =
+      "block";
+
+    coupleCode.innerText =
+      user.coupleId;
+
+  }else{
+
+    section.style.display =
+      "block";
+
+    connected.style.display =
+      "none";
+
+  }
+
+}
+
+
+// =====================================
+// 🏆 NOMBRES SCORE
+// =====================================
+
+export function renderNames(logs){
+
+  let hombre =
+    "Él";
+
+  let mujer =
+    "Ella";
+
+  logs.forEach(l => {
+
+    const gender =
+      String(l.gender || "")
+      .toLowerCase();
+
+    if(
+      gender.includes("hombre")
+    ){
+
+      hombre =
+        l.userName;
+
+    }
+
+    if(
+      gender.includes("mujer")
+    ){
+
+      mujer =
+        l.userName;
+
+    }
+
+  });
+
+  const h =
+    document.getElementById(
+      "name-hombre"
+    );
+
+  const m =
+    document.getElementById(
+      "name-mujer"
+    );
+
+  if(h){
+
+    h.innerText = hombre;
+
+  }
+
+  if(m){
+
+    m.innerText = mujer;
+
+  }
+
 }
