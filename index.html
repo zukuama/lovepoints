@@ -3,519 +3,520 @@
 
 <head>
 
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>LovePoints</title>
+  <title>LovePoints</title>
 
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-rel="stylesheet"
-/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-<link
-href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-rel="stylesheet"
-/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-<style>
+  <style>
+    body {
 
-body{
+      background: #f5f7fb;
 
-  background:#f5f7fb;
+      font-family: 'Poppins', sans-serif;
 
-  font-family:'Poppins',sans-serif;
+      color: #222;
 
-  color:#222;
+    }
 
-}
+    .main-card {
 
-.main-card{
+      border: none;
 
-  border:none;
+      border-radius: 24px;
 
-  border-radius:24px;
+      background: white;
 
-  background:white;
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, .06);
 
-  box-shadow:
-  0 10px 30px rgba(0,0,0,.06);
+    }
 
-}
+    .btn-action {
 
-.btn-action{
+      position: relative;
 
-  position:relative;
+      border-radius: 20px;
 
-  border-radius:20px;
+      padding: 18px;
 
-  padding:18px;
+      border: 1px solid #eee;
 
-  border:1px solid #eee;
+      background: white;
 
-  background:white;
+      transition: .2s;
 
-  transition:.2s;
+      font-weight: 600;
 
-  font-weight:600;
+      overflow: hidden;
 
-  overflow:hidden;
+      min-height: 130px;
 
-  min-height:130px;
+      display: flex;
 
-  display:flex;
+      align-items: end;
 
-  align-items:end;
+      justify-content: start;
 
-  justify-content:start;
+      text-align: left;
 
-  text-align:left;
+      background-size: cover;
 
-  background-size:cover;
+      background-position: center;
 
-  background-position:center;
+    }
 
-}
+    .btn-action:hover {
 
-.btn-action:hover{
+      transform: translateY(-2px);
 
-  transform:translateY(-2px);
+    }
 
-}
+    .btn-overlay {
 
-.btn-overlay{
+      position: absolute;
 
-  position:absolute;
+      inset: 0;
 
-  inset:0;
+      background:
+        linear-gradient(to top,
+          rgba(0, 0, 0, .7),
+          rgba(0, 0, 0, .15));
 
-  background:
-  linear-gradient(
-    to top,
-    rgba(0,0,0,.7),
-    rgba(0,0,0,.15)
-  );
+    }
 
-}
+    .btn-content {
 
-.btn-content{
+      position: relative;
 
-  position:relative;
+      z-index: 2;
 
-  z-index:2;
+      color: white;
 
-  color:white;
+    }
 
-}
+    .score {
 
-.score{
+      background:
+        linear-gradient(135deg,
+          #ff4bb4,
+          #ff6bc8);
 
-  background:
-  linear-gradient(
-    135deg,
-    #ff4bb4,
-    #ff6bc8
-  );
+      color: white;
 
-  color:white;
+      border-radius: 25px;
 
-  border-radius:25px;
+      padding: 25px;
 
-  padding:25px;
+    }
 
-}
+    .history-item {
 
-.history-item{
+      background: white;
 
-  background:white;
+      padding: 14px;
 
-  padding:14px;
+      border-left:
+        5px solid #ff4bb4;
 
-  border-left:
-  5px solid #ff4bb4;
+      margin-bottom: 10px;
 
-  margin-bottom:10px;
+      border-radius: 14px;
 
-  border-radius:14px;
+      box-shadow:
+        0 5px 15px rgba(0, 0, 0, .03);
 
-  box-shadow:
-  0 5px 15px rgba(0,0,0,.03);
+    }
 
-}
+    .profile {
 
-.profile{
+      display: flex;
 
-  display:flex;
+      align-items: center;
 
-  align-items:center;
+      gap: 12px;
 
-  gap:12px;
+    }
 
-}
+    .profile img {
 
-.profile img{
+      width: 50px;
 
-  width:50px;
+      height: 50px;
 
-  height:50px;
+      border-radius: 50%;
 
-  border-radius:50%;
+      object-fit: cover;
 
-  object-fit:cover;
+    }
 
-}
+    .connected-box {
 
-.connected-box{
+      background: #fff0f8;
 
-  background:#fff0f8;
+      border: 2px dashed #ff4bb4;
 
-  border:2px dashed #ff4bb4;
+      border-radius: 20px;
 
-  border-radius:20px;
+      padding: 15px;
 
-  padding:15px;
+      text-align: center;
 
-  text-align:center;
+    }
 
-}
+    .custom-input {
 
-.custom-input{
+      border-radius: 15px;
 
-  border-radius:15px;
+      padding: 12px;
 
-  padding:12px;
+    }
 
-}
+    .section-title {
 
-.section-title{
+      font-weight: 700;
 
-  font-weight:700;
+      margin-bottom: 15px;
 
-  margin-bottom:15px;
+    }
 
-}
+    .activity-preview {
 
-.activity-preview{
+      width: 100%;
 
-  width:100%;
+      height: 180px;
 
-  height:180px;
+      object-fit: cover;
 
-  object-fit:cover;
+      border-radius: 15px;
 
-  border-radius:15px;
+      margin-top: 10px;
 
-  margin-top:10px;
+      display: none;
 
-  display:none;
+    }
 
-}
+    .badge-use {
 
-.badge-use{
+      position: absolute;
 
-  position:absolute;
+      top: 10px;
 
-  top:10px;
+      right: 10px;
 
-  right:10px;
+      z-index: 3;
 
-  z-index:3;
+      background: #ffffffdd;
 
-  background:#ffffffdd;
+      color: #222;
 
-  color:#222;
+      padding: 5px 10px;
 
-  padding:5px 10px;
+      border-radius: 30px;
 
-  border-radius:30px;
+      font-size: .8rem;
 
-  font-size:.8rem;
+      font-weight: 600;
 
-  font-weight:600;
-
-}
-
-</style>
+    }
+  </style>
 
 </head>
 
 <body>
 
-<div class="container py-4">
-
-<div class="row justify-content-center">
+  <div class="container py-4">
 
-<div class="col-12 col-md-6">
-
-
-<!-- LOGO -->
-<h1 class="text-center fw-bold mb-4">
-❤️ LovePoints
-</h1>
+    <div class="row justify-content-center">
 
+      <div class="col-12 col-md-6">
 
-<!-- PERFIL -->
-<div class="main-card p-3 mb-3">
 
-<div
-class="d-flex justify-content-between align-items-center"
->
+        <!-- LOGO -->
+        <h1 class="text-center fw-bold mb-4">
+          ❤️ LovePoints
+        </h1>
 
-<button
-id="login-btn"
-class="btn btn-dark"
-onclick="login()"
->
-🔐 Iniciar sesión
-</button>
-
-<div
-id="profile-box"
-class="profile"
-style="display:none;"
->
 
-<img
-id="profile-img"
-src=""
-/>
-
-<div>
+        <!-- PERFIL -->
+        <div class="main-card p-3 mb-3">
 
-<div
-id="profile-name"
-class="fw-bold"
->
-Usuario
-</div>
-
-<small class="text-muted">
-Conectado
-</small>
-
-</div>
-
-</div>
-
-<button
-id="logout-btn"
-class="btn btn-danger"
-onclick="logout()"
-style="display:none;"
->
-Salir
-</button>
-
-</div>
-
-</div>
-
-
-<!-- PAREJA -->
-<div
-id="couple-section"
-class="main-card p-3 mb-3"
->
-
-<h5 class="section-title">
-❤️ Pareja
-</h5>
-
-<button
-class="btn btn-primary mb-3"
-onclick="createMyCouple()"
->
-Crear pareja
-</button>
-
-<p>
-Código:
-<strong id="couple-code">
----
-</strong>
-</p>
-
-<hr>
-
-<input
-id="join-code"
-class="form-control custom-input mb-2"
-placeholder="Ingresar código"
-/>
-
-<button
-class="btn btn-dark w-100"
-onclick="joinMyCouple()"
->
-Unirse
-</button>
+          <div class="d-flex justify-content-between align-items-center">
 
-</div>
+            <button id="login-btn" class="btn btn-dark" onclick="login()">
+              🔐 Iniciar sesión
+            </button>
 
+            <div id="profile-box" class="profile" style="display:none;">
 
-<!-- CONECTADOS -->
-<div
-id="connected-box"
-class="connected-box mb-3"
-style="display:none;"
->
+              <img id="profile-img" src="" />
 
-<div class="fw-bold mb-1">
-❤️ Pareja conectada
-</div>
+              <div>
 
-<div>
-Código:
-<strong id="connected-code">
----
-</strong>
-</div>
+                <div id="profile-name" class="fw-bold">
+                  Usuario
+                </div>
 
-</div>
+                <small class="text-muted">
+                  Conectado
+                </small>
 
+              </div>
 
-<!-- CREAR ACTIVIDAD -->
-<div
-id="activity-creator"
-class="main-card p-3 mb-3"
->
+            </div>
 
-<h5 class="section-title">
-➕ Crear actividad
-</h5>
+            <button id="logout-btn" class="btn btn-danger" onclick="logout()" style="display:none;">
+              Salir
+            </button>
 
-<input
-id="activity-name"
-class="form-control custom-input mb-2"
-placeholder="Nombre actividad"
-/>
+          </div>
 
-<input
-id="activity-points"
-type="number"
-class="form-control custom-input mb-2"
-placeholder="Puntos"
-/>
+        </div>
 
-<input
-id="activity-image"
-type="file"
-accept="image/*"
-class="form-control custom-input mb-2"
-/>
 
-<img
-id="activity-preview"
-class="activity-preview"
-/>
+        <!-- PAREJA -->
+        <div id="couple-section" class="main-card p-3 mb-3">
 
-<button
-class="btn btn-primary w-100 mt-3"
-onclick="createNewActivity()"
->
-Guardar actividad
-</button>
+          <h5 class="section-title">
+            ❤️ Pareja
+          </h5>
 
-</div>
+          <button class="btn btn-primary mb-3" onclick="createMyCouple()">
+            Crear pareja
+          </button>
 
+          <p>
+            Código:
+            <strong id="couple-code">
+              ---
+            </strong>
+          </p>
 
-<!-- ACTIVIDADES -->
-<div class="main-card p-3 mb-3">
+          <hr>
 
-<div
-class="d-flex justify-content-between align-items-center mb-3"
->
+          <input id="join-code" class="form-control custom-input mb-2" placeholder="Ingresar código" />
 
-<h5 class="section-title mb-0">
-🔥 Actividades
-</h5>
+          <button class="btn btn-dark w-100" onclick="joinMyCouple()">
+            Unirse
+          </button>
 
-<small class="text-muted">
-Más usadas primero
-</small>
+        </div>
 
-</div>
 
-<div
-id="activities-container"
-class="row g-2"
->
+        <!-- CONECTADOS -->
+        <div id="connected-box" class="connected-box mb-3" style="display:none;">
 
-<!-- dinámico -->
+          <div class="fw-bold mb-1">
+            ❤️ Pareja conectada
+          </div>
 
-</div>
+          <div>
+            Código:
+            <strong id="connected-code">
+              ---
+            </strong>
+          </div>
 
-</div>
+        </div>
 
 
-<!-- SCORE -->
-<div class="score text-center mb-3">
+        <!-- CREAR ACTIVIDAD -->
+        <div id="activity-creator" class="main-card p-3 mb-3">
 
-<h4 class="fw-bold mb-4">
-🏆 Puntaje
-</h4>
+          <h5 class="section-title">
+            ➕ Crear actividad
+          </h5>
 
-<div class="row">
+          <input id="activity-name" class="form-control custom-input mb-2" placeholder="Nombre actividad" />
 
-<div class="col">
+          <input id="activity-points" type="number" class="form-control custom-input mb-2" placeholder="Puntos" />
 
-<h5 id="name-hombre">
-Él
-</h5>
+          <input id="activity-image" type="file" accept="image/*" class="form-control custom-input mb-2" />
 
-<div
-id="score-Hombre"
-class="fs-2 fw-bold"
->
-0
-</div>
+          <img id="activity-preview" class="activity-preview" />
 
-</div>
+          <button class="btn btn-primary w-100 mt-3" onclick="createNewActivity()">
+            Guardar actividad
+          </button>
 
-<div class="col">
+        </div>
 
-<h5 id="name-mujer">
-Ella
-</h5>
 
-<div
-id="score-Mujer"
-class="fs-2 fw-bold"
->
-0
-</div>
+        <!-- ACTIVIDADES -->
+        <div class="main-card p-3 mb-3">
 
-</div>
+          <div class="d-flex justify-content-between align-items-center mb-3">
 
-</div>
+            <h5 class="section-title mb-0">
+              🔥 Actividades
+            </h5>
 
-</div>
+            <small class="text-muted">
+              Más usadas primero
+            </small>
 
+          </div>
 
-<!-- HISTORIAL -->
-<div>
+          <div id="activities-container" class="row g-2">
 
-<h5 class="fw-bold mb-3">
-📜 Historial
-</h5>
+            <!-- dinámico -->
 
-<div id="history-list"></div>
+          </div>
 
-</div>
+        </div>
 
 
-</div>
-</div>
-</div>
+        <!-- SCORE -->
+        <div class="score text-center mb-3">
 
-<script
-type="module"
-src="js/app.js"
-></script>
+          <h4 class="fw-bold mb-4">
+            🏆 Puntaje
+          </h4>
+
+          <div class="row">
+
+            <div class="col">
+
+              <h5 id="name-hombre">
+                Él
+              </h5>
+
+              <div id="score-Hombre" class="fs-2 fw-bold">
+                0
+              </div>
+
+            </div>
+
+            <div class="col">
+
+              <h5 id="name-mujer">
+                Ella
+              </h5>
+
+              <div id="score-Mujer" class="fs-2 fw-bold">
+                0
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- STATS -->
+
+        <div class="main-card p-3 mb-3">
+
+          <h5 class="mb-3">
+            📊 Estadísticas
+          </h5>
+
+          <div class="row g-2">
+
+            <div class="col-6">
+
+              <div class="p-3 bg-light rounded">
+
+                <small>
+                  Usuario más activo
+                </small>
+
+                <div id="stat-active-user" class="fw-bold">
+                  -
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="col-6">
+
+              <div class="p-3 bg-light rounded">
+
+                <small>
+                  Actividad favorita
+                </small>
+
+                <div id="stat-favorite" class="fw-bold">
+                  -
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="col-6">
+
+              <div class="p-3 bg-light rounded">
+
+                <small>
+                  Días ganados
+                </small>
+
+                <div id="stat-days" class="fw-bold">
+                  -
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="col-6">
+
+              <div class="p-3 bg-light rounded">
+
+                <small>
+                  Total acciones
+                </small>
+
+                <div id="stat-actions" class="fw-bold">
+                  -
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- CHART -->
+
+        <div class="main-card p-3 mb-3">
+
+          <h5 class="mb-3">
+            📈 Evolución de puntos
+          </h5>
+
+          <canvas id="pointsChart" height="120"></canvas>
+
+        </div>
+
+        <!-- HISTORIAL -->
+        <div>
+
+          <h5 class="fw-bold mb-3">
+            📜 Historial
+          </h5>
+
+          <div id="history-list"></div>
+
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="js/app.js"></script>
 
 </body>
+
 </html>

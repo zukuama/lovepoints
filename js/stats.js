@@ -1,50 +1,227 @@
-// js/stats.js
+// =====================================
+// 🔥 ESTADÍSTICAS
+// =====================================
 
-// semana
-export function getWeek(date) {
-  const firstJan = new Date(date.getFullYear(), 0, 1);
-  const days = Math.floor((date - firstJan) / (24 * 60 * 60 * 1000));
-  const week = Math.ceil((days + firstJan.getDay() + 1) / 7);
-  return `${date.getFullYear()}-W${week}`;
+
+// =====================================
+// 📅 OBTENER DÍA
+// =====================================
+
+function getDayKey(timestamp){
+
+  const d =
+    new Date(timestamp);
+
+  return `
+
+    ${d.getFullYear()}-
+
+    ${d.getMonth()+1}-
+
+    ${d.getDate()}
+
+  `;
+
 }
 
-// ganador semanal
-export function getWeeklyWinner(logs) {
-  const currentWeek = getWeek(new Date());
 
-  let totals = { Hombre: 0, Mujer: 0 };
+// =====================================
+// 🏆 DÍAS GANADOS
+// =====================================
 
-  logs.forEach(l => {
-    if (l.week === currentWeek) {
-      totals[l.user] += l.points;
+export function calculateDayWins(logs){
+
+  const days = {};
+
+  logs.forEach(log => {
+
+    const day =
+      getDayKey(
+        log.timestamp
+      );
+
+    if(!days[day]){
+
+      days[day] = {};
+
     }
-  });
 
-  if (totals.Hombre === totals.Mujer) return "Empate";
-  return totals.Hombre > totals.Mujer ? "Él" : "Ella";
-}
+    if(!days[day][log.userId]){
 
-// 🧠 QUIÉN HIZO MÁS ACCIONES (TOP)
-export function getTopActions(logs) {
-  const actions = {};
+      days[day][log.userId] = 0;
 
-  logs.forEach(l => {
-    if (!actions[l.action]) {
-      actions[l.action] = { Hombre: 0, Mujer: 0 };
     }
-    actions[l.action][l.user]++;
+
+    days[day][log.userId] +=
+      Number(log.points || 0);
+
   });
 
-  return actions;
+  const winners = {};
+
+  Object.values(days).forEach(dayData => {
+
+    const users =
+      Object.entries(dayData);
+
+    if(users.length < 2){
+
+      return;
+
+    }
+
+    users.sort(
+      (a,b)=>b[1]-a[1]
+    );
+
+    const winnerId =
+      users[0][0];
+
+    winners[winnerId] =
+      (winners[winnerId] || 0)
+      + 1;
+
+  });
+
+  return winners;
+
 }
 
-// 📊 QUIÉN SUMÓ MÁS PUNTOS TOTAL
-export function getTotalPoints(logs) {
-  let totals = { Hombre: 0, Mujer: 0 };
 
-  logs.forEach(l => {
-    totals[l.user] += l.points;
+// =====================================
+// ❤️ CONTAR ACCIONES
+// =====================================
+
+export function countActions(logs){
+
+  const result = {};
+
+  logs.forEach(log => {
+
+    const action =
+      log.action;
+
+    if(!result[action]){
+
+      result[action] = 0;
+
+    }
+
+    result[action]++;
+
   });
 
-  return totals;
+  return result;
+
+}
+
+
+// =====================================
+// 🔥 ACCIÓN FAVORITA
+// =====================================
+
+export function favoriteAction(logs){
+
+  const actions =
+    countActions(logs);
+
+  let winner = null;
+
+  let max = 0;
+
+  Object.entries(actions)
+  .forEach(([name,count])=>{
+
+    if(count > max){
+
+      max = count;
+
+      winner = name;
+
+    }
+
+  });
+
+  return {
+
+    name:winner,
+
+    count:max
+
+  };
+
+}
+
+
+// =====================================
+// 🏆 USUARIO MÁS ACTIVO
+// =====================================
+
+export function mostActiveUser(logs){
+
+  const users = {};
+
+  logs.forEach(log => {
+
+    if(!users[log.userName]){
+
+      users[log.userName] = 0;
+
+    }
+
+    users[log.userName] +=
+      Number(log.points || 0);
+
+  });
+
+  let winner = null;
+
+  let max = 0;
+
+  Object.entries(users)
+  .forEach(([name,points])=>{
+
+    if(points > max){
+
+      max = points;
+
+      winner = name;
+
+    }
+
+  });
+
+  return {
+
+    name:winner,
+
+    points:max
+
+  };
+
+}
+
+
+// =====================================
+// 📊 STATS COMPLETAS
+// =====================================
+
+export function buildStats(logs){
+
+  return {
+
+    dayWins:
+      calculateDayWins(logs),
+
+    favorite:
+      favoriteAction(logs),
+
+    activeUser:
+      mostActiveUser(logs),
+
+    actions:
+      countActions(logs)
+
+  };
+
 }

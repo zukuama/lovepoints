@@ -1,33 +1,85 @@
 import {
-  saveLog,
-  listenLogs
+
+  renderPointsChart
+
 }
-from "./firebase.js";
+
+from "./charts.js";
+
+// =====================================
+// 🔥 FIREBASE
+// =====================================
 
 import {
+
+  saveLog,
+  listenLogs
+
+}
+
+  from "./firebase.js";
+
+
+// =====================================
+// 🔐 AUTH
+// =====================================
+
+import {
+
   loginGoogle,
   onUserChange,
   logout
+
 }
-from "./auth.js";
+
+  from "./auth.js";
+
+
+// =====================================
+// 👤 USERS
+// =====================================
 
 import {
+
   getUserData
+
 }
-from "./users.js";
+
+  from "./users.js";
+
+
+// =====================================
+// ❤️ COUPLES
+// =====================================
 
 import {
+
   createCouple,
   joinCouple
+
 }
-from "./couples.js";
+
+  from "./couples.js";
+
+
+// =====================================
+// 🎨 UI
+// =====================================
 
 import {
+
   renderUser,
   renderCoupleSection,
   renderNames
+
 }
-from "./ui.js";
+
+  from "./ui.js";
+
+
+// =====================================
+// ❤️ ACTIVITIES
+// =====================================
 
 import {
 
@@ -36,9 +88,34 @@ import {
   increaseActivityUse
 
 }
-from "./activities.js";
+
+  from "./activities.js";
 
 
+// =====================================
+// 🖼️ CACHE IMAGES
+// =====================================
+
+import {
+
+  saveImage,
+  getImage
+
+}
+
+  from "./imageCache.js";
+
+
+// =====================================
+// 🖼️ estadisticas
+// =====================================
+  import {
+
+  buildStats
+
+}
+
+from "./stats.js";
 // =====================================
 // 🔥 VARIABLES
 // =====================================
@@ -56,13 +133,13 @@ let isAuthReady = false;
 // 🔐 LOGIN
 // =====================================
 
-window.login = async function(){
+window.login = async function () {
 
-  try{
+  try {
 
     await loginGoogle();
 
-  }catch(e){
+  } catch (e) {
 
     console.error(e);
 
@@ -79,15 +156,15 @@ window.login = async function(){
 // 🚪 LOGOUT
 // =====================================
 
-window.logout = async function(){
+window.logout = async function () {
 
-  try{
+  try {
 
     await logout();
 
     location.reload();
 
-  }catch(e){
+  } catch (e) {
 
     console.error(e);
 
@@ -101,115 +178,121 @@ window.logout = async function(){
 // =====================================
 
 window.createMyCouple =
-async function(){
+  async function () {
 
-  if(!currentUserData){
+    if (!currentUserData) {
 
-    alert("Iniciá sesión");
-
-    return;
-
-  }
-
-  try{
-
-    const code =
-      await createCouple(
-        currentUserData.uid
+      alert(
+        "Iniciá sesión"
       );
 
-    currentUserData.coupleId =
-      code;
+      return;
 
-    renderCoupleSection(
-      currentUserData
-    );
+    }
 
-    startRealtimeLogs();
+    try {
 
-    startRealtimeActivities();
+      const code =
+        await createCouple(
+          currentUserData.uid
+        );
 
-    alert(
-      "❤️ Pareja creada"
-    );
+      currentUserData.coupleId =
+        code;
 
-  }catch(e){
+      renderCoupleSection(
+        currentUserData
+      );
 
-    console.error(e);
+      startRealtimeLogs();
 
-  }
+      startRealtimeActivities();
 
-};
+      alert(
+        "❤️ Pareja creada"
+      );
+
+    } catch (e) {
+
+      console.error(e);
+
+    }
+
+  };
 
 
 // =====================================
-// 🔗 UNIRSE A PAREJA
+// 🔗 UNIRSE PAREJA
 // =====================================
 
 window.joinMyCouple =
-async function(){
+  async function () {
 
-  if(!currentUserData){
+    if (!currentUserData) {
 
-    alert("Iniciá sesión");
+      alert(
+        "Iniciá sesión"
+      );
 
-    return;
+      return;
 
-  }
+    }
 
-  const code =
-    document
-    .getElementById(
-      "join-code"
-    )
-    .value
-    .trim()
-    .toUpperCase();
+    const code =
+      document
+        .getElementById(
+          "join-code"
+        )
+        .value
+        .trim()
+        .toUpperCase();
 
-  if(!code){
+    if (!code) {
 
-    alert(
-      "Ingresá código"
-    );
+      alert(
+        "Ingresá código"
+      );
 
-    return;
+      return;
 
-  }
+    }
 
-  try{
+    try {
 
-    await joinCouple(
+      await joinCouple(
 
-      currentUserData.uid,
+        currentUserData.uid,
 
-      code
+        code
 
-    );
+      );
 
-    currentUserData.coupleId =
-      code;
+      currentUserData.coupleId =
+        code;
 
-    renderCoupleSection(
-      currentUserData
-    );
+      renderCoupleSection(
+        currentUserData
+      );
 
-    startRealtimeLogs();
+      startRealtimeLogs();
 
-    startRealtimeActivities();
+      startRealtimeActivities();
 
-    alert(
-      "❤️ Vinculados"
-    );
+      alert(
+        "❤️ Vinculados"
+      );
 
-  }catch(e){
+    } catch (e) {
 
-    console.error(e);
+      console.error(e);
 
-    alert(e.message);
+      alert(
+        e.message
+      );
 
-  }
+    }
 
-};
+  };
 
 
 // =====================================
@@ -218,9 +301,9 @@ async function(){
 
 onUserChange(async user => {
 
-  if(user){
+  if (user) {
 
-    try{
+    try {
 
       const userData =
         await getUserData(
@@ -249,13 +332,13 @@ onUserChange(async user => {
 
       startRealtimeActivities();
 
-    }catch(e){
+    } catch (e) {
 
       console.error(e);
 
     }
 
-  }else{
+  } else {
 
     currentUserData = null;
 
@@ -282,15 +365,15 @@ onUserChange(async user => {
 // 🔥 REALTIME LOGS
 // =====================================
 
-function startRealtimeLogs(){
+function startRealtimeLogs() {
 
-  if(
+  if (
 
     !currentUserData ||
 
     !currentUserData.coupleId
 
-  ){
+  ) {
 
     logs = [];
 
@@ -321,15 +404,15 @@ function startRealtimeLogs(){
 // 🔥 REALTIME ACTIVITIES
 // =====================================
 
-function startRealtimeActivities(){
+function startRealtimeActivities() {
 
-  if(
+  if (
 
     !currentUserData ||
 
     !currentUserData.coupleId
 
-  ){
+  ) {
 
     activities = [];
 
@@ -362,136 +445,152 @@ function startRealtimeActivities(){
 // =====================================
 
 window.createNewActivity =
-async function(){
+  async function () {
 
-  if(!currentUserData){
+    if (!currentUserData) {
 
-    alert(
-      "Iniciá sesión"
-    );
+      alert(
+        "Iniciá sesión"
+      );
 
-    return;
+      return;
 
-  }
+    }
 
-  if(!currentUserData.coupleId){
+    if (!currentUserData.coupleId) {
 
-    alert(
-      "Primero conectá pareja"
-    );
+      alert(
+        "Primero conectá pareja"
+      );
 
-    return;
+      return;
 
-  }
+    }
 
-  const name =
-    document
-    .getElementById(
-      "activity-name"
-    )
-    .value
-    .trim();
+    const name =
+      document
+        .getElementById(
+          "activity-name"
+        )
+        .value
+        .trim();
 
-  const points =
-    Number(
+    const points =
+      Number(
+
+        document
+          .getElementById(
+            "activity-points"
+          )
+          .value
+
+      );
+
+    const file =
+      document
+        .getElementById(
+          "activity-image"
+        )
+        .files[0];
+
+    if (!name || !points) {
+
+      alert(
+        "Completar datos"
+      );
+
+      return;
+
+    }
+
+    // =====================================
+    // 🔥 IMAGEN LOCAL
+    // =====================================
+
+    let imageId = "";
+
+    if (file) {
+
+      imageId =
+        crypto.randomUUID();
+
+      const base64 =
+        await toBase64(file);
+
+      // guardar local
+      await saveImage(
+
+        imageId,
+
+        base64
+
+      );
+
+    }
+
+    // =====================================
+    // ❤️ ACTIVIDAD
+    // =====================================
+
+    const activity = {
+
+      coupleId:
+        currentUserData.coupleId,
+
+      name,
+
+      points,
+
+      imageId,
+
+      uses: 0,
+
+      createdBy:
+        currentUserData.uid,
+
+      createdAt:
+        Date.now()
+
+    };
+
+    try {
+
+      await createActivity(
+        activity
+      );
+
+      // limpiar
+      document
+        .getElementById(
+          "activity-name"
+        )
+        .value = "";
 
       document
-      .getElementById(
-        "activity-points"
-      )
-      .value
+        .getElementById(
+          "activity-points"
+        )
+        .value = "";
 
-    );
+      document
+        .getElementById(
+          "activity-image"
+        )
+        .value = "";
 
-  const file =
-    document
-    .getElementById(
-      "activity-image"
-    )
-    .files[0];
+      document
+        .getElementById(
+          "activity-preview"
+        )
+        .style.display = "none";
 
-  if(!name || !points){
+    } catch (e) {
 
-    alert(
-      "Completar datos"
-    );
+      console.error(e);
 
-    return;
-
-  }
-
-  let image = "";
-
-  // =====================================
-  // 🔥 CONVERTIR IMAGEN BASE64
-  // =====================================
-
-  if(file){
-
-    image =
-      await toBase64(file);
-
-  }
-
-  const activity = {
-
-    coupleId:
-      currentUserData.coupleId,
-
-    name,
-
-    points,
-
-    image,
-
-    uses:0,
-
-    createdBy:
-      currentUserData.uid,
-
-    createdAt:
-      Date.now()
+    }
 
   };
-
-  try{
-
-    await createActivity(
-      activity
-    );
-
-    // limpiar
-    document
-    .getElementById(
-      "activity-name"
-    )
-    .value = "";
-
-    document
-    .getElementById(
-      "activity-points"
-    )
-    .value = "";
-
-    document
-    .getElementById(
-      "activity-image"
-    )
-    .value = "";
-
-    document
-    .getElementById(
-      "activity-preview"
-    )
-    .style.display = "none";
-
-  }catch(e){
-
-    console.error(e);
-
-  }
-
-};
 
 
 // =====================================
@@ -499,50 +598,50 @@ async function(){
 // =====================================
 
 document
-.getElementById(
-  "activity-image"
-)
-?.addEventListener(
+  .getElementById(
+    "activity-image"
+  )
+  ?.addEventListener(
 
-  "change",
+    "change",
 
-  async e => {
+    async e => {
 
-    const file =
-      e.target.files[0];
+      const file =
+        e.target.files[0];
 
-    if(!file){
+      if (!file) {
 
-      return;
+        return;
+
+      }
+
+      const base64 =
+        await toBase64(file);
+
+      const preview =
+        document.getElementById(
+          "activity-preview"
+        );
+
+      preview.src =
+        base64;
+
+      preview.style.display =
+        "block";
 
     }
 
-    const base64 =
-      await toBase64(file);
-
-    const preview =
-      document.getElementById(
-        "activity-preview"
-      );
-
-    preview.src =
-      base64;
-
-    preview.style.display =
-      "block";
-
-  }
-
-);
+  );
 
 
 // =====================================
 // 🔥 TO BASE64
 // =====================================
 
-function toBase64(file){
+function toBase64(file) {
 
-  return new Promise((resolve,reject)=>{
+  return new Promise((resolve, reject) => {
 
     const reader =
       new FileReader();
@@ -550,10 +649,10 @@ function toBase64(file){
     reader.readAsDataURL(file);
 
     reader.onload =
-      ()=>resolve(reader.result);
+      () => resolve(reader.result);
 
     reader.onerror =
-      error=>reject(error);
+      error => reject(error);
 
   });
 
@@ -565,97 +664,97 @@ function toBase64(file){
 // =====================================
 
 window.addPoint =
-async function(
-
-  activityId,
-  action,
-  points
-
-){
-
-  if(!isAuthReady){
-
-    alert(
-      "Iniciá sesión"
-    );
-
-    return;
-
-  }
-
-  if(!currentUserData.coupleId){
-
-    alert(
-      "Conectá pareja"
-    );
-
-    return;
-
-  }
-
-  const now = new Date();
-
-  const log = {
-
-    userId:
-      currentUserData.uid,
-
-    userName:
-      currentUserData.name,
-
-    gender:
-      currentUserData.gender,
-
-    coupleId:
-      currentUserData.coupleId,
-
-    action,
-
-    points,
+  async function (
 
     activityId,
+    action,
+    points
 
-    timestamp:
-      now.getTime(),
+  ) {
 
-    month:
-      now.getMonth(),
+    if (!isAuthReady) {
 
-    year:
-      now.getFullYear()
+      alert(
+        "Iniciá sesión"
+      );
+
+      return;
+
+    }
+
+    if (!currentUserData.coupleId) {
+
+      alert(
+        "Conectá pareja"
+      );
+
+      return;
+
+    }
+
+    const now = new Date();
+
+    const log = {
+
+      userId:
+        currentUserData.uid,
+
+      userName:
+        currentUserData.name,
+
+      gender:
+        currentUserData.gender,
+
+      coupleId:
+        currentUserData.coupleId,
+
+      action,
+
+      points,
+
+      activityId,
+
+      timestamp:
+        now.getTime(),
+
+      month:
+        now.getMonth(),
+
+      year:
+        now.getFullYear()
+
+    };
+
+    try {
+
+      await saveLog(log);
+
+      await increaseActivityUse(
+        activityId
+      );
+
+    } catch (e) {
+
+      console.error(e);
+
+    }
 
   };
-
-  try{
-
-    await saveLog(log);
-
-    // 🔥 sumar uso
-    await increaseActivityUse(
-      activityId
-    );
-
-  }catch(e){
-
-    console.error(e);
-
-  }
-
-};
 
 
 // =====================================
 // 🎨 ACTIVIDADES
 // =====================================
 
-function renderActivities(){
+async function renderActivities() {
 
   const container =
+
     document.getElementById(
       "activities-container"
     );
 
-  if(!container){
+  if (!container) {
 
     return;
 
@@ -663,7 +762,22 @@ function renderActivities(){
 
   container.innerHTML = "";
 
-  activities.forEach(a=>{
+  for (const a of activities) {
+
+    let image = "";
+
+    // =====================================
+    // 🔥 LEER IMAGEN LOCAL
+    // =====================================
+
+    if (a.imageId) {
+
+      image =
+        await getImage(
+          a.imageId
+        );
+
+    }
 
     const col =
       document.createElement("div");
@@ -677,7 +791,12 @@ function renderActivities(){
       class="btn btn-action w-100"
 
       style="
-      background-image:url('${a.image || ""}');
+      background-image:url('${image || ""}');
+      background-size:cover;
+      background-position:center;
+      min-height:160px;
+      position:relative;
+      overflow:hidden;
       "
 
       onclick="
@@ -697,7 +816,7 @@ function renderActivities(){
 
       <div class="btn-content">
 
-      <div class="fs-5">
+      <div class="fs-5 fw-bold">
       ${a.name}
       </div>
 
@@ -713,7 +832,7 @@ function renderActivities(){
 
     container.appendChild(col);
 
-  });
+  }
 
 }
 
@@ -722,7 +841,7 @@ function renderActivities(){
 // 🎨 SCORE + HISTORIAL
 // =====================================
 
-function render(){
+function render() {
 
   let hombreTotal = 0;
 
@@ -735,10 +854,10 @@ function render(){
 
     const gender =
       String(l.gender || "")
-      .toLowerCase()
-      .trim();
+        .toLowerCase()
+        .trim();
 
-    if(
+    if (
 
       gender.includes("hombre") ||
 
@@ -746,13 +865,13 @@ function render(){
 
       gender.includes("mascul")
 
-    ){
+    ) {
 
       hombreTotal += pts;
 
     }
 
-    else if(
+    else if (
 
       gender.includes("mujer") ||
 
@@ -760,7 +879,7 @@ function render(){
 
       gender.includes("femen")
 
-    ){
+    ) {
 
       mujerTotal += pts;
 
@@ -793,7 +912,7 @@ function render(){
       "history-list"
     );
 
-  if(!list){
+  if (!list) {
 
     return;
 
@@ -802,35 +921,117 @@ function render(){
   list.innerHTML = "";
 
   logs
-  .sort(
-    (a,b)=>
-    b.timestamp - a.timestamp
-  )
-  .slice(0,20)
-  .forEach(l => {
+    .sort(
+      (a, b) =>
+        b.timestamp - a.timestamp
+    )
+    .slice(0, 20)
+    .forEach(l => {
 
-    const div =
-      document.createElement("div");
+      const div =
+        document.createElement("div");
 
-    div.className =
-      "history-item";
+      div.className =
+        "history-item";
 
-    div.innerHTML = `
+      div.innerHTML = `
+
+  <div class="d-flex justify-content-between align-items-center">
+
+    <span>
 
       <strong>
         ${l.userName}
       </strong>
 
-      hizo
+      • ${l.action}
 
-      ${l.action}
+    </span>
 
-      (+${l.points})
+    <strong>
+      +${l.points}
+    </strong>
 
-    `;
+  </div>
 
-    list.appendChild(div);
+`;
 
-  });
+      list.appendChild(div);
+
+    });
+
+    // =====================================
+// 📊 STATS
+// =====================================
+
+const stats =
+  buildStats(logs);
+
+
+// =====================================
+// 🔥 USUARIO MÁS ACTIVO
+// =====================================
+
+document.getElementById(
+  "stat-active-user"
+).innerText =
+
+stats.activeUser.name
+
+? `${stats.activeUser.name}
+(${stats.activeUser.points})`
+
+: "-";
+
+
+// =====================================
+// ❤️ ACTIVIDAD FAVORITA
+// =====================================
+
+document.getElementById(
+  "stat-favorite"
+).innerText =
+
+stats.favorite.name
+
+? `${stats.favorite.name}
+(${stats.favorite.count})`
+
+: "-";
+
+
+// =====================================
+// 🏆 DÍAS GANADOS
+// =====================================
+
+const dayWins =
+  Object.values(
+    stats.dayWins
+  )
+  .reduce(
+    (a,b)=>a+b,
+    0
+  );
+
+document.getElementById(
+  "stat-days"
+).innerText =
+  dayWins;
+
+
+// =====================================
+// 🔥 TOTAL ACCIONES
+// =====================================
+
+document.getElementById(
+  "stat-actions"
+).innerText =
+  logs.length;
+
+// =====================================
+// 📊 CHART
+// =====================================
+
+renderPointsChart(logs);
 
 }
