@@ -1,10 +1,24 @@
+
+import {
+  getWeeklyWinner
+}
+  from "./weeklyWinner.js";
+
+import {
+
+  updateHero
+
+}
+
+  from "./hero.js";
+
 import {
 
   renderPointsChart
 
 }
 
-from "./charts.js";
+  from "./charts.js";
 
 // =====================================
 // 🔥 FIREBASE
@@ -41,7 +55,8 @@ import {
 
 import {
 
-  getUserData
+  getUserData,
+  getPartnerData
 
 }
 
@@ -109,13 +124,13 @@ import {
 // =====================================
 // 🖼️ estadisticas
 // =====================================
-  import {
+import {
 
   buildStats
 
 }
 
-from "./stats.js";
+  from "./stats.js";
 // =====================================
 // 🔥 VARIABLES
 // =====================================
@@ -125,6 +140,8 @@ let logs = [];
 let activities = [];
 
 let currentUserData = null;
+
+let partnerData = null;
 
 let isAuthReady = false;
 
@@ -197,11 +214,20 @@ window.createMyCouple =
           currentUserData.uid
         );
 
+      // guardar código local
       currentUserData.coupleId =
         code;
 
+      // =====================================
+      // ❤️ ACTUALIZAR PANEL PAREJA
+      // =====================================
+
       renderCoupleSection(
-        currentUserData
+
+        currentUserData,
+
+        partnerData
+
       );
 
       startRealtimeLogs();
@@ -267,11 +293,20 @@ window.joinMyCouple =
 
       );
 
+      // guardar código local
       currentUserData.coupleId =
         code;
 
+      // =====================================
+      // ❤️ ACTUALIZAR PANEL PAREJA
+      // =====================================
+
       renderCoupleSection(
-        currentUserData
+
+        currentUserData,
+
+        partnerData
+
       );
 
       startRealtimeLogs();
@@ -296,7 +331,7 @@ window.joinMyCouple =
 
 
 // =====================================
-// 👀 SESIÓN
+// 👀 CAMBIOS DE SESIÓN
 // =====================================
 
 onUserChange(async user => {
@@ -304,6 +339,10 @@ onUserChange(async user => {
   if (user) {
 
     try {
+
+      // =====================================
+      // 👤 LEER DATOS DEL USUARIO
+      // =====================================
 
       const userData =
         await getUserData(
@@ -318,15 +357,44 @@ onUserChange(async user => {
 
       };
 
+      // =====================================
+      // ❤️ BUSCAR DATOS DE LA PAREJA
+      // =====================================
+
+      partnerData =
+        await getPartnerData(
+
+          user.uid,
+
+          currentUserData.coupleId
+
+        );
+
       isAuthReady = true;
+
+      // =====================================
+      // 👤 MOSTRAR PERFIL
+      // =====================================
 
       renderUser(
         currentUserData
       );
 
+      // =====================================
+      // ❤️ MOSTRAR PAREJA
+      // =====================================
+
       renderCoupleSection(
-        currentUserData
+
+        currentUserData,
+
+        partnerData
+
       );
+
+      // =====================================
+      // 🔥 REALTIME
+      // =====================================
 
       startRealtimeLogs();
 
@@ -341,6 +409,8 @@ onUserChange(async user => {
   } else {
 
     currentUserData = null;
+
+    partnerData = null;
 
     isAuthReady = false;
 
@@ -960,78 +1030,127 @@ function render() {
 
     });
 
-    // =====================================
-// 📊 STATS
-// =====================================
+  // =====================================
+  // 📊 STATS
+  // =====================================
 
-const stats =
-  buildStats(logs);
+  const stats =
+    buildStats(logs);
 
 
-// =====================================
-// 🔥 USUARIO MÁS ACTIVO
-// =====================================
+  const weekly =
+    getWeeklyWinner(logs);
 
-document.getElementById(
-  "stat-active-user"
-).innerText =
+  if (weekly) {
 
-stats.activeUser.name
+    document.getElementById(
+      "weekly-winner"
+    ).innerHTML = `
 
-? `${stats.activeUser.name}
+    <h2>
+      👑 ${weekly.winner}
+    </h2>
+
+    <p>
+      ${weekly.points}
+      puntos esta semana
+    </p>
+
+  `;
+
+  }
+
+
+  // =====================================
+  // 🔥 USUARIO MÁS ACTIVO
+  // =====================================
+
+  document.getElementById(
+    "stat-active-user"
+  ).innerText =
+
+    stats.activeUser.name
+
+      ? `${stats.activeUser.name}
 (${stats.activeUser.points})`
 
-: "-";
+      : "-";
 
 
-// =====================================
-// ❤️ ACTIVIDAD FAVORITA
-// =====================================
+  // =====================================
+  // ❤️ ACTIVIDAD FAVORITA
+  // =====================================
 
-document.getElementById(
-  "stat-favorite"
-).innerText =
+  document.getElementById(
+    "stat-favorite"
+  ).innerText =
 
-stats.favorite.name
+    stats.favorite.name
 
-? `${stats.favorite.name}
+      ? `${stats.favorite.name}
 (${stats.favorite.count})`
 
-: "-";
+      : "-";
 
 
-// =====================================
-// 🏆 DÍAS GANADOS
-// =====================================
+  // =====================================
+  // 🏆 DÍAS GANADOS
+  // =====================================
 
-const dayWins =
-  Object.values(
-    stats.dayWins
-  )
-  .reduce(
-    (a,b)=>a+b,
-    0
-  );
+  const dayWins =
+    Object.values(
+      stats.dayWins
+    )
+      .reduce(
+        (a, b) => a + b,
+        0
+      );
 
-document.getElementById(
-  "stat-days"
-).innerText =
-  dayWins;
+  document.getElementById(
+    "stat-days"
+  ).innerText =
+    dayWins;
 
 
-// =====================================
-// 🔥 TOTAL ACCIONES
-// =====================================
+  // =====================================
+  // 🔥 TOTAL ACCIONES
+  // =====================================
 
-document.getElementById(
-  "stat-actions"
-).innerText =
-  logs.length;
+  document.getElementById(
+    "stat-actions"
+  ).innerText =
+    logs.length;
 
-// =====================================
-// 📊 CHART
-// =====================================
+  renderPointsChart(logs);
 
-renderPointsChart(logs);
+  if (currentUserData) {
+
+    updateHero({
+
+      user: {
+
+        name:
+          currentUserData.name,
+
+        photoURL:
+          currentUserData.photoURL
+
+      },
+
+      partner: {
+
+        name:
+          partnerData?.name || "",
+
+        photoURL:
+          partnerData?.photoURL || ""
+
+      },
+
+      logs
+
+    });
+
+  }
 
 }

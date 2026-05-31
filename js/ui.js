@@ -70,7 +70,16 @@ export function renderUser(user){
 // ❤️ PANEL PAREJA
 // =====================================
 
-export function renderCoupleSection(user){
+export function renderCoupleSection(
+
+  user,
+  partner = null
+
+){
+
+  // =====================================
+  // 📦 CONTENEDORES HTML
+  // =====================================
 
   const section =
     document.getElementById(
@@ -82,26 +91,84 @@ export function renderCoupleSection(user){
       "connected-box"
     );
 
-  const coupleCode =
+  const partnerName =
     document.getElementById(
-      "connected-code"
+      "partner-name"
     );
 
+  const partnerPhoto =
+    document.getElementById(
+      "partner-photo"
+    );
+
+  // =====================================
+  // ❤️ USUARIO TIENE PAREJA
+  // =====================================
+
   if(
+
     user &&
     user.coupleId
+
   ){
 
+    // ocultar panel crear/unirse
     section.style.display =
       "none";
 
+    // mostrar panel conectado
     connected.style.display =
       "block";
 
-    coupleCode.innerText =
-      user.coupleId;
+    // =====================================
+    // 📸 FOTO PAREJA
+    // =====================================
 
-  }else{
+    if(
+
+      partnerPhoto
+
+    ){
+
+      partnerPhoto.src =
+
+        partner?.photoURL ||
+
+        partner?.photo ||
+
+        user.photoURL ||
+
+        "";
+
+    }
+
+    // =====================================
+    // 👤 NOMBRE PAREJA
+    // =====================================
+
+    if(
+
+      partnerName
+
+    ){
+
+      partnerName.innerText =
+
+        partner?.name ||
+
+        partner?.displayName ||
+
+        "❤️ Pareja conectada";
+
+    }
+
+  }
+
+  // =====================================
+  // 💔 SIN PAREJA
+  // =====================================
+
+  else{
 
     section.style.display =
       "block";

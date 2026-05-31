@@ -1,0 +1,20 @@
+{
+  "name": "LovePoints",
+  "short_name": "LovePoints",
+  "display": "standalone",
+  "theme_color": "#ff4bb4",
+  "background_color": "#ffffff",
+  "start_url": "./",
+  "icons": [
+    {
+      "src": "source/img/logo-corazonSolo-favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "source/img/logo-corazonSolo-favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

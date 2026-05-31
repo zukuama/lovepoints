@@ -10,7 +10,11 @@ import {
 
   doc,
   getDoc,
-  updateDoc
+  updateDoc,
+  collection,
+  query,
+  where,
+  getDocs
 
 }
 
@@ -67,5 +71,60 @@ export async function updateUser(
     ref,
     data
   );
+
+}
+
+// =====================================
+// ❤️ GET PARTNER
+// =====================================
+
+export async function getPartnerData(
+
+  myUid,
+
+  coupleId
+
+){
+
+  if(!coupleId){
+
+    return null;
+
+  }
+
+  const q = query(
+
+    collection(
+      db,
+      "users"
+    ),
+
+    where(
+      "coupleId",
+      "==",
+      coupleId
+    )
+
+  );
+
+  const snap =
+    await getDocs(q);
+
+  let partner = null;
+
+  snap.forEach(docSnap => {
+
+    if(
+      docSnap.id !== myUid
+    ){
+
+      partner =
+        docSnap.data();
+
+    }
+
+  });
+
+  return partner;
 
 }
