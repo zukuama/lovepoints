@@ -1,4 +1,13 @@
 
+
+import {
+
+  deleteActivity as removeActivity
+
+}
+
+  from "./activityDelete.js";
+
 import {
   getWeeklyWinner
 }
@@ -811,7 +820,40 @@ window.addPoint =
 
   };
 
+// =====================================
+// 🗑️ ELIMINAR ACTIVIDAD
+// =====================================
 
+window.deleteMyActivity =
+  async function (activityId) {
+
+    const ok =
+      confirm(
+
+        "¿Eliminar esta actividad?"
+
+      );
+
+    if (!ok) {
+
+      return;
+
+    }
+
+    const deleted =
+      await removeActivity(
+        activityId
+      );
+
+    if (deleted) {
+
+      alert(
+        "Actividad eliminada"
+      );
+
+    }
+
+  };
 // =====================================
 // 🎨 ACTIVIDADES
 // =====================================
@@ -853,50 +895,70 @@ async function renderActivities() {
       document.createElement("div");
 
     col.className =
-      "col-6";
+      "col-6 position-relative";
 
     col.innerHTML = `
 
-      <button
-      class="btn btn-action w-100"
+<button
 
-      style="
-      background-image:url('${image || ""}');
-      background-size:cover;
-      background-position:center;
-      min-height:160px;
-      position:relative;
-      overflow:hidden;
-      "
+class="btn-delete"
 
-      onclick="
-      addPoint(
-        '${a.id}',
-        '${a.name}',
-        ${a.points}
-      )
-      "
-      >
+onclick="
 
-      <div class="btn-overlay"></div>
+event.stopPropagation();
 
-      <div class="badge-use">
-      🔥 ${a.uses || 0}
-      </div>
+deleteMyActivity(
+'${a.id}'
+)
 
-      <div class="btn-content">
+"
 
-      <div class="fs-5 fw-bold">
-      ${a.name}
-      </div>
+>
 
-      <small>
-      +${a.points} pts
-      </small>
+🗑️
 
-      </div>
+</button>
 
-      </button>
+<button
+
+class="btn btn-action w-100"
+
+style="
+background-image:url('${image || ""}');
+background-size:cover;
+background-position:center;
+min-height:160px;
+"
+
+onclick="
+addPoint(
+'${a.id}',
+'${a.name}',
+${a.points}
+)
+"
+
+>
+
+<div class="btn-overlay"></div>
+
+<div class="badge-use">
+🔥 ${a.uses || 0}
+</div>
+
+<div class="btn-content">
+
+<div class="fs-5 fw-bold">
+${a.name}
+</div>
+
+<small>
++${a.points} pts
+</small>
+
+</div>
+
+</button>
 
     `;
 
